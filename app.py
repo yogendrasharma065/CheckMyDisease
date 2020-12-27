@@ -2,6 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for
 from ML import PredictDisease
 import json
 import socket
+import dns
+from pymongo import MongoClient
+
+myclient = MongoClient("mongodb+srv://user12:w9jTSFswVHlOToRm@cluster0.fjcc4.mongodb.net/check_my_disease?retryWrites=true&w=majority")
+DB = myclient["check_my_disease"]
 
 hostname = socket.gethostname()
 ip_addr = socket.gethostbyname(hostname)
@@ -11,6 +16,56 @@ data_model = PredictDisease()
 
 app.my_ip = ip_addr
 app.my_port = 80
+
+
+def getLinks(dname):
+    table = DB["remedies"]
+    my_row = table.find_one({"name": dname})
+    return my_row
+
+def deleteUser(username):
+    table = DB['user']
+    table.delete_many({"username": username})
+
+def addUser(username, password):
+    table = DB['user']
+    table.insert_one({"username": username, "password": password})
+
+def checkForUser(username, password):
+    table = DB["user"]
+    rows = table.find({"username": username})
+    try:
+        single = rows[0]
+        if single["password"] == password:
+            return True
+        else:
+            return False
+    except IndexError:
+        return False
+
+
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        add_user(username, password)
+        result = {'status': 'success'}
+        return json.dumps(result)
+
+@app.route('/user_login', methods=['POST'])
+def user_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        result_set = {}
+        if len(username) == 0 or len(password) == 0:
+            valid = False
+        else:
+            valid = checkForUser(username, password)
+        result_set['valid'] = valid
+        return json.dumps(result_set)
+
 
 
 @app.route('/predict/<location>', methods=['POST'])
@@ -35,7 +90,21 @@ def predict(location):
         if location == 'final_result':
             node = request.form['node']
             d_list = json.loads(request.form['d_list'])
-            return json.dumps(data_model.final_result(node, d_list))
+
+            rt_data = data_model.final_result(node, d_list)
+            links = getLinks(rt_data["disease"])
+            rt_data["about"] = links["about"]
+            rt_data["treatment"] = links["treatment"]
+            rt_data["doctor"] = links["doctor"]
+            """
+            try:
+                rt_data["doctor"] = links["doctor"]
+            except KeyError:
+                rt_data["doctor"] = "https://www.justdial.com/Indore/57/Doctor_fil"
+            """
+
+            #print(rt_data)
+            return json.dumps(rt_data)
 
 
 @app.route('/')
@@ -91,6 +160,7 @@ def services():
 @app.route('/single_blog')
 def single_blog():
     return render_template('single-blog.html')
+
 
 
 if __name__ == '__main__':

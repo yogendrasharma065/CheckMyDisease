@@ -2,7 +2,7 @@
 {% block body %}
 
     <script>
-        function result_quote(c_level, d_name) {
+        function result_quote(c_level, d_name, d_about, d_treatment, d_doctor) {
             let result = "";
             result += "<div class='section-top-border'>";
             result += "<h3 style='color : white' class='mb-30'>Your Result</h3>";
@@ -11,6 +11,9 @@
             result += "<blockquote class='generic-blockquote'>";
             result += "<h3>Disease : "+d_name+"</h3>";
             result += "<h3>With Probability : "+Math.round(c_level*100)/100+"</h3>";
+            result += "<h3><a href='"+d_about+"'>About Disease</a></h3>";
+            result += "<h3><a href='"+d_treatment+"'>Get Treatment Details</a></h3>";
+            result += "<h3><a href='"+d_doctor+"'>Consult Doctor</a></h3>";
             result += "</blockquote>";
             result += "</div>";
             result += "</div>";
@@ -30,7 +33,10 @@
                     const fetched_data = JSON.parse(this.responseText);
                     let c_level = fetched_data.c_level;
                     let d_name = fetched_data.disease;
-                    document.getElementById('final_result').innerHTML = result_quote(c_level, d_name);
+                    let d_about = fetched_data.about;
+                    let d_treatment = fetched_data.treatment;
+                    let d_doctor = fetched_data.doctor;
+                    document.getElementById('final_result').innerHTML = result_quote(c_level, d_name, d_about, d_treatment, d_doctor);
                 }
               };
             xhttp.open("POST", "/predict/final_result", true);
@@ -143,6 +149,30 @@
             xhttp.open("POST", "/predict/first_list", true);
             xhttp.send();
         }
+        function user_check(username, password) {
+            //console.log(username, password);
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    const fetched_data = JSON.parse(this.responseText);
+                    try{
+                        if(fetched_data.valid){
+                            add_drop_down();
+                        }else{
+                            alert('Invalid Password');
+                        }
+                    }catch(err){
+                        alert('Invalid Password');
+                    }
+
+                }
+              };
+            xhttp.open("POST", "/user_login", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            let data = "username="+username+"&password="+password;
+            console.log(data);
+            xhttp.send(data);
+        }
 
     </script>
     <!--::Symptoms input::-->
@@ -151,6 +181,25 @@
             <div style="min-height: 460px" class="row align-items-center regervation_content">
                 <div class="col-lg-7">
                     <div id="drop_down" class="regervation_part_iner">
+                        <!--<div class="col-lg-8">
+                                <div class="row">
+                                  <div class="col-6">
+                                    <div class="form-group">
+                                      <input class="form-control" name="username" id="username" type="text" onfocus="this.placeholder = ''"
+                                        onblur="this.placeholder = 'Username'" placeholder='Username' minlength="8" maxlength="32"/>
+                                    </div>
+                                  </div>
+                                  <div class="col-6">
+                                    <div class="form-group">
+                                      <input class="form-control" name="password" id="password" type="password" onfocus="this.placeholder = ''"
+                                        onblur="this.placeholder = 'Password'" placeholder='Password' minlength="8" maxlength="32"/>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                  <button onclick="user_check(document.getElementById('username').value, document.getElementById('password').value)" class="button button-contactForm btn_1">Start Now</button>
+                                </div>
+                        </div>-->
                         <div class="button-group-area mt-40">
                             <button onclick="add_drop_down();" class='genric-btn primary e-large'>Start Now</button>
 			            </div>
