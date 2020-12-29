@@ -42,7 +42,7 @@ Bottleneck==1.2.1
 camelcase==0.2
 cffi==1.12.2
 cloudpickle==0.8.0
-clyent==1.2.2
+
 colorama==0.4.1
 comtypes==1.1.7
 conda==4.8.3
