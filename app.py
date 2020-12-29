@@ -1,21 +1,21 @@
 from flask import Flask, render_template, request, redirect, url_for
 from ML import PredictDisease
 import json
-#import socket
+import socket
 import dns
 from pymongo import MongoClient
 
 myclient = MongoClient("mongodb+srv://user12:w9jTSFswVHlOToRm@cluster0.fjcc4.mongodb.net/check_my_disease?retryWrites=true&w=majority")
 DB = myclient["check_my_disease"]
 
-#hostname = socket.gethostname()
-#ip_addr = socket.gethostbyname(hostname)
+hostname = socket.gethostname()
+ip_addr = socket.gethostbyname(hostname)
 
 app = Flask(__name__)
 data_model = PredictDisease()
 
-#app.my_ip = ip_addr
-#app.my_port = 80
+app.my_ip = ip_addr
+app.my_port = 80
 
 
 def getLinks(dname):
@@ -164,4 +164,4 @@ def single_blog():
 
 
 if __name__ == '__main__':
-    app.run()#host=app.my_ip, port=app.my_port)
+    app.run(host=app.my_ip, port=app.my_port)
