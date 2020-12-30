@@ -20,6 +20,8 @@ py==1.8.0
 distributed==1.26.0
 certifi==2020.4.5.1
 chardet==3.0.4
+pytz==2018.9
+six==1.12.0
 
 
 alabaster==0.7.12
@@ -139,7 +141,6 @@ pytest-doctestplus==0.3.0
 pytest-openfiles==0.3.2
 pytest-remotedata==0.3.1
 python-dateutil==2.8.0
-pytz==2018.9
 PyWavelets==1.0.2
 PyYAML==5.1
 pyzmq==18.0.0
@@ -155,7 +156,6 @@ seaborn==0.9.0
 Send2Trash==1.5.0
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
-six==1.12.0
 snowballstemmer==1.2.1
 sortedcollections==1.1.2
 sortedcontainers==2.1.0
