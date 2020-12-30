@@ -93,15 +93,18 @@ def predict(location):
 
             rt_data = data_model.final_result(node, d_list)
             links = getLinks(rt_data["disease"])
-            rt_data["about"] = links["about"]
-            rt_data["treatment"] = links["treatment"]
-            rt_data["doctor"] = links["doctor"]
-            """
+            try:
+                rt_data["about"] = links["about"]
+            except KeyError:
+                rt_data["about"] = "https://www.mayoclinic.org/"
+            try:
+                rt_data["treatment"] = links["treatment"]
+            except KeyError:
+                rt_data["treatment"] = "https://www.mayoclinic.org/"
             try:
                 rt_data["doctor"] = links["doctor"]
             except KeyError:
                 rt_data["doctor"] = "https://www.justdial.com/Indore/57/Doctor_fil"
-            """
 
             #print(rt_data)
             return json.dumps(rt_data)
