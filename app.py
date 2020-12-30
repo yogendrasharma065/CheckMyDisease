@@ -95,15 +95,15 @@ def predict(location):
             links = getLinks(rt_data["disease"])
             try:
                 rt_data["about"] = links["about"]
-            except KeyError:
+            except:
                 rt_data["about"] = "https://www.mayoclinic.org/"
             try:
                 rt_data["treatment"] = links["treatment"]
-            except KeyError:
+            except:
                 rt_data["treatment"] = "https://www.mayoclinic.org/"
             try:
                 rt_data["doctor"] = links["doctor"]
-            except KeyError:
+            except:
                 rt_data["doctor"] = "https://www.justdial.com/Indore/57/Doctor_fil"
 
             #print(rt_data)
